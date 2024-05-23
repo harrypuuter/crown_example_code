@@ -1,0 +1,1 @@
+ROOT::RDF::RNode TauEmbeddingElectronIsoSF_1_MC_em(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

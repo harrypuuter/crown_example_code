@@ -1,0 +1,1 @@
+ROOT::RDF::RNode TTGenDiTauPairQuantities_tt(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

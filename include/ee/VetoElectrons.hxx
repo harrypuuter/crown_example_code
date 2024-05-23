@@ -1,0 +1,1 @@
+ROOT::RDF::RNode VetoElectrons_ee(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

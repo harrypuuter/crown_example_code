@@ -1,0 +1,1 @@
+ROOT::RDF::RNode MuMuGenPairQuantities_mm(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

@@ -1,0 +1,1 @@
+ROOT::RDF::RNode BasicBJetQuantities_mt(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

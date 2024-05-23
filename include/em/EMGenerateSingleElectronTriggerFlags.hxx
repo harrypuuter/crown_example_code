@@ -1,0 +1,1 @@
+ROOT::RDF::RNode EMGenerateSingleElectronTriggerFlags_em(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

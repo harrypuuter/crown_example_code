@@ -1,0 +1,1 @@
+ROOT::RDF::RNode MTGenerateSingleMuonTriggerSF_MC_mm(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

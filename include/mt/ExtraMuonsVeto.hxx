@@ -1,0 +1,1 @@
+ROOT::RDF::RNode ExtraMuonsVeto_mt(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

@@ -1,0 +1,1 @@
+ROOT::RDF::RNode NumberOfGoodElectrons_em(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

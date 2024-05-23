@@ -1,0 +1,1 @@
+ROOT::RDF::RNode TauEmbeddingMuonIsoSF_1_MC_mt(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

@@ -1,0 +1,1 @@
+ROOT::RDF::RNode ETGenerateSingleElectronTriggerSF_MC_et(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

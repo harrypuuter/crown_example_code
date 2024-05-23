@@ -1,0 +1,1 @@
+ROOT::RDF::RNode BaseElectrons_global(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);

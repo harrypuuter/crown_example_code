@@ -1,0 +1,386 @@
+#include "ROOT/RDataFrame.hxx"
+#include "ROOT/RDFHelpers.hxx"
+#include "RooTrace.h"
+#include "TStopwatch.h"
+#include <ROOT/RLogger.hxx>
+#include "include/utility/Logger.hxx"
+#include <TFile.h>
+#include <TMap.h>
+#include <filesystem>
+#include <TObjString.h>
+#include <TTree.h>
+#include <TVector.h>
+#include "onnxruntime_cxx_api.h"
+#include <regex>
+#include <string>
+#include "include/utility/OnnxSessionManager.hxx"
+#include "include/utility/CorrectionManager.hxx"
+#include "include/genparticles.hxx"
+#include "include/htxs.hxx"
+#include "include/jets.hxx"
+#include "include/lorentzvectors.hxx"
+#include "include/met.hxx"
+#include "include/ml.hxx"
+#include "include/metfilter.hxx"
+#include "include/pairselection.hxx"
+#include "include/tripleselection.hxx"
+#include "include/physicsobjects.hxx"
+#include "include/quantities.hxx"
+#include "include/reweighting.hxx"
+#include "include/scalefactors.hxx"
+#include "include/topreco.hxx"
+#include "include/triggers.hxx"
+#include "include/fakefactors.hxx"
+ROOT::RDF::RNode BasicJetQuantities_mm (ROOT::RDF::RNode df0, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager) {
+
+        auto df1 = lorentzvectors::build(df0, {"good_jet_collection","Jet_pt_corrected","Jet_eta","Jet_phi","Jet_mass_corrected"}, 0, "jet_p4_1");
+    auto df2 = lorentzvectors::build(df1, {"good_jet_collection__jesUncFlavorQCDUp","Jet_pt_corrected__jesUncFlavorQCDUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncFlavorQCDUp"}, 0, "jet_p4_1__jesUncFlavorQCDUp");
+    auto df3 = lorentzvectors::build(df2, {"good_jet_collection__jesUncHFDown","Jet_pt_corrected__jesUncHFDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFDown"}, 0, "jet_p4_1__jesUncHFDown");
+    auto df4 = lorentzvectors::build(df3, {"good_jet_collection__jesUncRelativeBalUp","Jet_pt_corrected__jesUncRelativeBalUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeBalUp"}, 0, "jet_p4_1__jesUncRelativeBalUp");
+    auto df5 = lorentzvectors::build(df4, {"good_jet_collection__jesUncTotalDown","Jet_pt_corrected__jesUncTotalDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncTotalDown"}, 0, "jet_p4_1__jesUncTotalDown");
+    auto df6 = lorentzvectors::build(df5, {"good_jet_collection__jesUncRelativeSampleYearUp","Jet_pt_corrected__jesUncRelativeSampleYearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeSampleYearUp"}, 0, "jet_p4_1__jesUncRelativeSampleYearUp");
+    auto df7 = lorentzvectors::build(df6, {"good_jet_collection__jesUncAbsoluteDown","Jet_pt_corrected__jesUncAbsoluteDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteDown"}, 0, "jet_p4_1__jesUncAbsoluteDown");
+    auto df8 = lorentzvectors::build(df7, {"good_jet_collection__jerUncDown","Jet_pt_corrected__jerUncDown","Jet_eta","Jet_phi","Jet_mass_corrected__jerUncDown"}, 0, "jet_p4_1__jerUncDown");
+    auto df9 = lorentzvectors::build(df8, {"good_jet_collection__jerUncUp","Jet_pt_corrected__jerUncUp","Jet_eta","Jet_phi","Jet_mass_corrected__jerUncUp"}, 0, "jet_p4_1__jerUncUp");
+    auto df10 = lorentzvectors::build(df9, {"good_jet_collection__jesUncEC2YearDown","Jet_pt_corrected__jesUncEC2YearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2YearDown"}, 0, "jet_p4_1__jesUncEC2YearDown");
+    auto df11 = lorentzvectors::build(df10, {"good_jet_collection__jesUncBBEC1Down","Jet_pt_corrected__jesUncBBEC1Down","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1Down"}, 0, "jet_p4_1__jesUncBBEC1Down");
+    auto df12 = lorentzvectors::build(df11, {"good_jet_collection__jesUncEC2Down","Jet_pt_corrected__jesUncEC2Down","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2Down"}, 0, "jet_p4_1__jesUncEC2Down");
+    auto df13 = lorentzvectors::build(df12, {"good_jet_collection__jesUncAbsoluteYearDown","Jet_pt_corrected__jesUncAbsoluteYearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteYearDown"}, 0, "jet_p4_1__jesUncAbsoluteYearDown");
+    auto df14 = lorentzvectors::build(df13, {"good_jet_collection__jesUncRelativeBalDown","Jet_pt_corrected__jesUncRelativeBalDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeBalDown"}, 0, "jet_p4_1__jesUncRelativeBalDown");
+    auto df15 = lorentzvectors::build(df14, {"good_jet_collection__jesUncTotalUp","Jet_pt_corrected__jesUncTotalUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncTotalUp"}, 0, "jet_p4_1__jesUncTotalUp");
+    auto df16 = lorentzvectors::build(df15, {"good_jet_collection__jesUncBBEC1YearUp","Jet_pt_corrected__jesUncBBEC1YearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1YearUp"}, 0, "jet_p4_1__jesUncBBEC1YearUp");
+    auto df17 = lorentzvectors::build(df16, {"good_jet_collection__jesUncHEMIssueUp","Jet_pt_corrected__jesUncHEMIssueUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHEMIssueUp"}, 0, "jet_p4_1__jesUncHEMIssueUp");
+    auto df18 = lorentzvectors::build(df17, {"good_jet_collection__jesUncRelativeSampleYearDown","Jet_pt_corrected__jesUncRelativeSampleYearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeSampleYearDown"}, 0, "jet_p4_1__jesUncRelativeSampleYearDown");
+    auto df19 = lorentzvectors::build(df18, {"good_jet_collection__jesUncHFUp","Jet_pt_corrected__jesUncHFUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFUp"}, 0, "jet_p4_1__jesUncHFUp");
+    auto df20 = lorentzvectors::build(df19, {"good_jet_collection__jesUncFlavorQCDDown","Jet_pt_corrected__jesUncFlavorQCDDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncFlavorQCDDown"}, 0, "jet_p4_1__jesUncFlavorQCDDown");
+    auto df21 = lorentzvectors::build(df20, {"good_jet_collection__jesUncHEMIssueDown","Jet_pt_corrected__jesUncHEMIssueDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHEMIssueDown"}, 0, "jet_p4_1__jesUncHEMIssueDown");
+    auto df22 = lorentzvectors::build(df21, {"good_jet_collection__jesUncAbsoluteUp","Jet_pt_corrected__jesUncAbsoluteUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteUp"}, 0, "jet_p4_1__jesUncAbsoluteUp");
+    auto df23 = lorentzvectors::build(df22, {"good_jet_collection__jesUncEC2YearUp","Jet_pt_corrected__jesUncEC2YearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2YearUp"}, 0, "jet_p4_1__jesUncEC2YearUp");
+    auto df24 = lorentzvectors::build(df23, {"good_jet_collection__jesUncEC2Up","Jet_pt_corrected__jesUncEC2Up","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2Up"}, 0, "jet_p4_1__jesUncEC2Up");
+    auto df25 = lorentzvectors::build(df24, {"good_jet_collection__jesUncBBEC1Up","Jet_pt_corrected__jesUncBBEC1Up","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1Up"}, 0, "jet_p4_1__jesUncBBEC1Up");
+    auto df26 = lorentzvectors::build(df25, {"good_jet_collection__jesUncAbsoluteYearUp","Jet_pt_corrected__jesUncAbsoluteYearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteYearUp"}, 0, "jet_p4_1__jesUncAbsoluteYearUp");
+    auto df27 = lorentzvectors::build(df26, {"good_jet_collection__jesUncHFYearUp","Jet_pt_corrected__jesUncHFYearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFYearUp"}, 0, "jet_p4_1__jesUncHFYearUp");
+    auto df28 = lorentzvectors::build(df27, {"good_jet_collection__jesUncHFYearDown","Jet_pt_corrected__jesUncHFYearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFYearDown"}, 0, "jet_p4_1__jesUncHFYearDown");
+    auto df29 = lorentzvectors::build(df28, {"good_jet_collection__jesUncBBEC1YearDown","Jet_pt_corrected__jesUncBBEC1YearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1YearDown"}, 0, "jet_p4_1__jesUncBBEC1YearDown");
+    auto df30 = lorentzvectors::build(df29, {"good_jet_collection","Jet_pt_corrected","Jet_eta","Jet_phi","Jet_mass_corrected"}, 1, "jet_p4_2");
+    auto df31 = lorentzvectors::build(df30, {"good_jet_collection__jesUncFlavorQCDUp","Jet_pt_corrected__jesUncFlavorQCDUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncFlavorQCDUp"}, 1, "jet_p4_2__jesUncFlavorQCDUp");
+    auto df32 = lorentzvectors::build(df31, {"good_jet_collection__jesUncHFDown","Jet_pt_corrected__jesUncHFDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFDown"}, 1, "jet_p4_2__jesUncHFDown");
+    auto df33 = lorentzvectors::build(df32, {"good_jet_collection__jesUncRelativeBalUp","Jet_pt_corrected__jesUncRelativeBalUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeBalUp"}, 1, "jet_p4_2__jesUncRelativeBalUp");
+    auto df34 = lorentzvectors::build(df33, {"good_jet_collection__jesUncTotalDown","Jet_pt_corrected__jesUncTotalDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncTotalDown"}, 1, "jet_p4_2__jesUncTotalDown");
+    auto df35 = lorentzvectors::build(df34, {"good_jet_collection__jesUncRelativeSampleYearUp","Jet_pt_corrected__jesUncRelativeSampleYearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeSampleYearUp"}, 1, "jet_p4_2__jesUncRelativeSampleYearUp");
+    auto df36 = lorentzvectors::build(df35, {"good_jet_collection__jesUncAbsoluteDown","Jet_pt_corrected__jesUncAbsoluteDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteDown"}, 1, "jet_p4_2__jesUncAbsoluteDown");
+    auto df37 = lorentzvectors::build(df36, {"good_jet_collection__jerUncDown","Jet_pt_corrected__jerUncDown","Jet_eta","Jet_phi","Jet_mass_corrected__jerUncDown"}, 1, "jet_p4_2__jerUncDown");
+    auto df38 = lorentzvectors::build(df37, {"good_jet_collection__jerUncUp","Jet_pt_corrected__jerUncUp","Jet_eta","Jet_phi","Jet_mass_corrected__jerUncUp"}, 1, "jet_p4_2__jerUncUp");
+    auto df39 = lorentzvectors::build(df38, {"good_jet_collection__jesUncEC2YearDown","Jet_pt_corrected__jesUncEC2YearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2YearDown"}, 1, "jet_p4_2__jesUncEC2YearDown");
+    auto df40 = lorentzvectors::build(df39, {"good_jet_collection__jesUncBBEC1Down","Jet_pt_corrected__jesUncBBEC1Down","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1Down"}, 1, "jet_p4_2__jesUncBBEC1Down");
+    auto df41 = lorentzvectors::build(df40, {"good_jet_collection__jesUncEC2Down","Jet_pt_corrected__jesUncEC2Down","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2Down"}, 1, "jet_p4_2__jesUncEC2Down");
+    auto df42 = lorentzvectors::build(df41, {"good_jet_collection__jesUncAbsoluteYearDown","Jet_pt_corrected__jesUncAbsoluteYearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteYearDown"}, 1, "jet_p4_2__jesUncAbsoluteYearDown");
+    auto df43 = lorentzvectors::build(df42, {"good_jet_collection__jesUncRelativeBalDown","Jet_pt_corrected__jesUncRelativeBalDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeBalDown"}, 1, "jet_p4_2__jesUncRelativeBalDown");
+    auto df44 = lorentzvectors::build(df43, {"good_jet_collection__jesUncTotalUp","Jet_pt_corrected__jesUncTotalUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncTotalUp"}, 1, "jet_p4_2__jesUncTotalUp");
+    auto df45 = lorentzvectors::build(df44, {"good_jet_collection__jesUncBBEC1YearUp","Jet_pt_corrected__jesUncBBEC1YearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1YearUp"}, 1, "jet_p4_2__jesUncBBEC1YearUp");
+    auto df46 = lorentzvectors::build(df45, {"good_jet_collection__jesUncHEMIssueUp","Jet_pt_corrected__jesUncHEMIssueUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHEMIssueUp"}, 1, "jet_p4_2__jesUncHEMIssueUp");
+    auto df47 = lorentzvectors::build(df46, {"good_jet_collection__jesUncRelativeSampleYearDown","Jet_pt_corrected__jesUncRelativeSampleYearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncRelativeSampleYearDown"}, 1, "jet_p4_2__jesUncRelativeSampleYearDown");
+    auto df48 = lorentzvectors::build(df47, {"good_jet_collection__jesUncHFUp","Jet_pt_corrected__jesUncHFUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFUp"}, 1, "jet_p4_2__jesUncHFUp");
+    auto df49 = lorentzvectors::build(df48, {"good_jet_collection__jesUncFlavorQCDDown","Jet_pt_corrected__jesUncFlavorQCDDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncFlavorQCDDown"}, 1, "jet_p4_2__jesUncFlavorQCDDown");
+    auto df50 = lorentzvectors::build(df49, {"good_jet_collection__jesUncHEMIssueDown","Jet_pt_corrected__jesUncHEMIssueDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHEMIssueDown"}, 1, "jet_p4_2__jesUncHEMIssueDown");
+    auto df51 = lorentzvectors::build(df50, {"good_jet_collection__jesUncAbsoluteUp","Jet_pt_corrected__jesUncAbsoluteUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteUp"}, 1, "jet_p4_2__jesUncAbsoluteUp");
+    auto df52 = lorentzvectors::build(df51, {"good_jet_collection__jesUncEC2YearUp","Jet_pt_corrected__jesUncEC2YearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2YearUp"}, 1, "jet_p4_2__jesUncEC2YearUp");
+    auto df53 = lorentzvectors::build(df52, {"good_jet_collection__jesUncEC2Up","Jet_pt_corrected__jesUncEC2Up","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncEC2Up"}, 1, "jet_p4_2__jesUncEC2Up");
+    auto df54 = lorentzvectors::build(df53, {"good_jet_collection__jesUncBBEC1Up","Jet_pt_corrected__jesUncBBEC1Up","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1Up"}, 1, "jet_p4_2__jesUncBBEC1Up");
+    auto df55 = lorentzvectors::build(df54, {"good_jet_collection__jesUncAbsoluteYearUp","Jet_pt_corrected__jesUncAbsoluteYearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncAbsoluteYearUp"}, 1, "jet_p4_2__jesUncAbsoluteYearUp");
+    auto df56 = lorentzvectors::build(df55, {"good_jet_collection__jesUncHFYearUp","Jet_pt_corrected__jesUncHFYearUp","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFYearUp"}, 1, "jet_p4_2__jesUncHFYearUp");
+    auto df57 = lorentzvectors::build(df56, {"good_jet_collection__jesUncHFYearDown","Jet_pt_corrected__jesUncHFYearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncHFYearDown"}, 1, "jet_p4_2__jesUncHFYearDown");
+    auto df58 = lorentzvectors::build(df57, {"good_jet_collection__jesUncBBEC1YearDown","Jet_pt_corrected__jesUncBBEC1YearDown","Jet_eta","Jet_phi","Jet_mass_corrected__jesUncBBEC1YearDown"}, 1, "jet_p4_2__jesUncBBEC1YearDown");
+    auto df59 = quantities::jet::NumberOfJets(df58, "njets", "good_jet_collection");
+    auto df60 = quantities::jet::NumberOfJets(df59, "njets__jesUncFlavorQCDUp", "good_jet_collection__jesUncFlavorQCDUp");
+    auto df61 = quantities::jet::NumberOfJets(df60, "njets__jesUncHFDown", "good_jet_collection__jesUncHFDown");
+    auto df62 = quantities::jet::NumberOfJets(df61, "njets__jesUncRelativeBalUp", "good_jet_collection__jesUncRelativeBalUp");
+    auto df63 = quantities::jet::NumberOfJets(df62, "njets__jesUncTotalDown", "good_jet_collection__jesUncTotalDown");
+    auto df64 = quantities::jet::NumberOfJets(df63, "njets__jesUncRelativeSampleYearUp", "good_jet_collection__jesUncRelativeSampleYearUp");
+    auto df65 = quantities::jet::NumberOfJets(df64, "njets__jesUncAbsoluteDown", "good_jet_collection__jesUncAbsoluteDown");
+    auto df66 = quantities::jet::NumberOfJets(df65, "njets__jerUncDown", "good_jet_collection__jerUncDown");
+    auto df67 = quantities::jet::NumberOfJets(df66, "njets__jerUncUp", "good_jet_collection__jerUncUp");
+    auto df68 = quantities::jet::NumberOfJets(df67, "njets__jesUncEC2YearDown", "good_jet_collection__jesUncEC2YearDown");
+    auto df69 = quantities::jet::NumberOfJets(df68, "njets__jesUncBBEC1Down", "good_jet_collection__jesUncBBEC1Down");
+    auto df70 = quantities::jet::NumberOfJets(df69, "njets__jesUncEC2Down", "good_jet_collection__jesUncEC2Down");
+    auto df71 = quantities::jet::NumberOfJets(df70, "njets__jesUncAbsoluteYearDown", "good_jet_collection__jesUncAbsoluteYearDown");
+    auto df72 = quantities::jet::NumberOfJets(df71, "njets__jesUncRelativeBalDown", "good_jet_collection__jesUncRelativeBalDown");
+    auto df73 = quantities::jet::NumberOfJets(df72, "njets__jesUncTotalUp", "good_jet_collection__jesUncTotalUp");
+    auto df74 = quantities::jet::NumberOfJets(df73, "njets__jesUncBBEC1YearUp", "good_jet_collection__jesUncBBEC1YearUp");
+    auto df75 = quantities::jet::NumberOfJets(df74, "njets__jesUncHEMIssueUp", "good_jet_collection__jesUncHEMIssueUp");
+    auto df76 = quantities::jet::NumberOfJets(df75, "njets__jesUncRelativeSampleYearDown", "good_jet_collection__jesUncRelativeSampleYearDown");
+    auto df77 = quantities::jet::NumberOfJets(df76, "njets__jesUncHFUp", "good_jet_collection__jesUncHFUp");
+    auto df78 = quantities::jet::NumberOfJets(df77, "njets__jesUncFlavorQCDDown", "good_jet_collection__jesUncFlavorQCDDown");
+    auto df79 = quantities::jet::NumberOfJets(df78, "njets__jesUncHEMIssueDown", "good_jet_collection__jesUncHEMIssueDown");
+    auto df80 = quantities::jet::NumberOfJets(df79, "njets__jesUncAbsoluteUp", "good_jet_collection__jesUncAbsoluteUp");
+    auto df81 = quantities::jet::NumberOfJets(df80, "njets__jesUncEC2YearUp", "good_jet_collection__jesUncEC2YearUp");
+    auto df82 = quantities::jet::NumberOfJets(df81, "njets__jesUncEC2Up", "good_jet_collection__jesUncEC2Up");
+    auto df83 = quantities::jet::NumberOfJets(df82, "njets__jesUncBBEC1Up", "good_jet_collection__jesUncBBEC1Up");
+    auto df84 = quantities::jet::NumberOfJets(df83, "njets__jesUncAbsoluteYearUp", "good_jet_collection__jesUncAbsoluteYearUp");
+    auto df85 = quantities::jet::NumberOfJets(df84, "njets__jesUncHFYearUp", "good_jet_collection__jesUncHFYearUp");
+    auto df86 = quantities::jet::NumberOfJets(df85, "njets__jesUncHFYearDown", "good_jet_collection__jesUncHFYearDown");
+    auto df87 = quantities::jet::NumberOfJets(df86, "njets__jesUncBBEC1YearDown", "good_jet_collection__jesUncBBEC1YearDown");
+    auto df88 = quantities::pt(df87, "jpt_1", "jet_p4_1");
+    auto df89 = quantities::pt(df88, "jpt_1__jesUncFlavorQCDUp", "jet_p4_1__jesUncFlavorQCDUp");
+    auto df90 = quantities::pt(df89, "jpt_1__jesUncHFDown", "jet_p4_1__jesUncHFDown");
+    auto df91 = quantities::pt(df90, "jpt_1__jesUncRelativeBalUp", "jet_p4_1__jesUncRelativeBalUp");
+    auto df92 = quantities::pt(df91, "jpt_1__jesUncTotalDown", "jet_p4_1__jesUncTotalDown");
+    auto df93 = quantities::pt(df92, "jpt_1__jesUncRelativeSampleYearUp", "jet_p4_1__jesUncRelativeSampleYearUp");
+    auto df94 = quantities::pt(df93, "jpt_1__jesUncAbsoluteDown", "jet_p4_1__jesUncAbsoluteDown");
+    auto df95 = quantities::pt(df94, "jpt_1__jerUncDown", "jet_p4_1__jerUncDown");
+    auto df96 = quantities::pt(df95, "jpt_1__jerUncUp", "jet_p4_1__jerUncUp");
+    auto df97 = quantities::pt(df96, "jpt_1__jesUncEC2YearDown", "jet_p4_1__jesUncEC2YearDown");
+    auto df98 = quantities::pt(df97, "jpt_1__jesUncBBEC1Down", "jet_p4_1__jesUncBBEC1Down");
+    auto df99 = quantities::pt(df98, "jpt_1__jesUncEC2Down", "jet_p4_1__jesUncEC2Down");
+    auto df100 = quantities::pt(df99, "jpt_1__jesUncAbsoluteYearDown", "jet_p4_1__jesUncAbsoluteYearDown");
+    auto df101 = quantities::pt(df100, "jpt_1__jesUncRelativeBalDown", "jet_p4_1__jesUncRelativeBalDown");
+    auto df102 = quantities::pt(df101, "jpt_1__jesUncTotalUp", "jet_p4_1__jesUncTotalUp");
+    auto df103 = quantities::pt(df102, "jpt_1__jesUncBBEC1YearUp", "jet_p4_1__jesUncBBEC1YearUp");
+    auto df104 = quantities::pt(df103, "jpt_1__jesUncHEMIssueUp", "jet_p4_1__jesUncHEMIssueUp");
+    auto df105 = quantities::pt(df104, "jpt_1__jesUncRelativeSampleYearDown", "jet_p4_1__jesUncRelativeSampleYearDown");
+    auto df106 = quantities::pt(df105, "jpt_1__jesUncHFUp", "jet_p4_1__jesUncHFUp");
+    auto df107 = quantities::pt(df106, "jpt_1__jesUncFlavorQCDDown", "jet_p4_1__jesUncFlavorQCDDown");
+    auto df108 = quantities::pt(df107, "jpt_1__jesUncHEMIssueDown", "jet_p4_1__jesUncHEMIssueDown");
+    auto df109 = quantities::pt(df108, "jpt_1__jesUncAbsoluteUp", "jet_p4_1__jesUncAbsoluteUp");
+    auto df110 = quantities::pt(df109, "jpt_1__jesUncEC2YearUp", "jet_p4_1__jesUncEC2YearUp");
+    auto df111 = quantities::pt(df110, "jpt_1__jesUncEC2Up", "jet_p4_1__jesUncEC2Up");
+    auto df112 = quantities::pt(df111, "jpt_1__jesUncBBEC1Up", "jet_p4_1__jesUncBBEC1Up");
+    auto df113 = quantities::pt(df112, "jpt_1__jesUncAbsoluteYearUp", "jet_p4_1__jesUncAbsoluteYearUp");
+    auto df114 = quantities::pt(df113, "jpt_1__jesUncHFYearUp", "jet_p4_1__jesUncHFYearUp");
+    auto df115 = quantities::pt(df114, "jpt_1__jesUncHFYearDown", "jet_p4_1__jesUncHFYearDown");
+    auto df116 = quantities::pt(df115, "jpt_1__jesUncBBEC1YearDown", "jet_p4_1__jesUncBBEC1YearDown");
+    auto df117 = quantities::eta(df116, "jeta_1", "jet_p4_1");
+    auto df118 = quantities::eta(df117, "jeta_1__jesUncFlavorQCDUp", "jet_p4_1__jesUncFlavorQCDUp");
+    auto df119 = quantities::eta(df118, "jeta_1__jesUncHFDown", "jet_p4_1__jesUncHFDown");
+    auto df120 = quantities::eta(df119, "jeta_1__jesUncRelativeBalUp", "jet_p4_1__jesUncRelativeBalUp");
+    auto df121 = quantities::eta(df120, "jeta_1__jesUncTotalDown", "jet_p4_1__jesUncTotalDown");
+    auto df122 = quantities::eta(df121, "jeta_1__jesUncRelativeSampleYearUp", "jet_p4_1__jesUncRelativeSampleYearUp");
+    auto df123 = quantities::eta(df122, "jeta_1__jesUncAbsoluteDown", "jet_p4_1__jesUncAbsoluteDown");
+    auto df124 = quantities::eta(df123, "jeta_1__jerUncDown", "jet_p4_1__jerUncDown");
+    auto df125 = quantities::eta(df124, "jeta_1__jerUncUp", "jet_p4_1__jerUncUp");
+    auto df126 = quantities::eta(df125, "jeta_1__jesUncEC2YearDown", "jet_p4_1__jesUncEC2YearDown");
+    auto df127 = quantities::eta(df126, "jeta_1__jesUncBBEC1Down", "jet_p4_1__jesUncBBEC1Down");
+    auto df128 = quantities::eta(df127, "jeta_1__jesUncEC2Down", "jet_p4_1__jesUncEC2Down");
+    auto df129 = quantities::eta(df128, "jeta_1__jesUncAbsoluteYearDown", "jet_p4_1__jesUncAbsoluteYearDown");
+    auto df130 = quantities::eta(df129, "jeta_1__jesUncRelativeBalDown", "jet_p4_1__jesUncRelativeBalDown");
+    auto df131 = quantities::eta(df130, "jeta_1__jesUncTotalUp", "jet_p4_1__jesUncTotalUp");
+    auto df132 = quantities::eta(df131, "jeta_1__jesUncBBEC1YearUp", "jet_p4_1__jesUncBBEC1YearUp");
+    auto df133 = quantities::eta(df132, "jeta_1__jesUncHEMIssueUp", "jet_p4_1__jesUncHEMIssueUp");
+    auto df134 = quantities::eta(df133, "jeta_1__jesUncRelativeSampleYearDown", "jet_p4_1__jesUncRelativeSampleYearDown");
+    auto df135 = quantities::eta(df134, "jeta_1__jesUncHFUp", "jet_p4_1__jesUncHFUp");
+    auto df136 = quantities::eta(df135, "jeta_1__jesUncFlavorQCDDown", "jet_p4_1__jesUncFlavorQCDDown");
+    auto df137 = quantities::eta(df136, "jeta_1__jesUncHEMIssueDown", "jet_p4_1__jesUncHEMIssueDown");
+    auto df138 = quantities::eta(df137, "jeta_1__jesUncAbsoluteUp", "jet_p4_1__jesUncAbsoluteUp");
+    auto df139 = quantities::eta(df138, "jeta_1__jesUncEC2YearUp", "jet_p4_1__jesUncEC2YearUp");
+    auto df140 = quantities::eta(df139, "jeta_1__jesUncEC2Up", "jet_p4_1__jesUncEC2Up");
+    auto df141 = quantities::eta(df140, "jeta_1__jesUncBBEC1Up", "jet_p4_1__jesUncBBEC1Up");
+    auto df142 = quantities::eta(df141, "jeta_1__jesUncAbsoluteYearUp", "jet_p4_1__jesUncAbsoluteYearUp");
+    auto df143 = quantities::eta(df142, "jeta_1__jesUncHFYearUp", "jet_p4_1__jesUncHFYearUp");
+    auto df144 = quantities::eta(df143, "jeta_1__jesUncHFYearDown", "jet_p4_1__jesUncHFYearDown");
+    auto df145 = quantities::eta(df144, "jeta_1__jesUncBBEC1YearDown", "jet_p4_1__jesUncBBEC1YearDown");
+    auto df146 = quantities::phi(df145, "jphi_1", "jet_p4_1");
+    auto df147 = quantities::phi(df146, "jphi_1__jesUncFlavorQCDUp", "jet_p4_1__jesUncFlavorQCDUp");
+    auto df148 = quantities::phi(df147, "jphi_1__jesUncHFDown", "jet_p4_1__jesUncHFDown");
+    auto df149 = quantities::phi(df148, "jphi_1__jesUncRelativeBalUp", "jet_p4_1__jesUncRelativeBalUp");
+    auto df150 = quantities::phi(df149, "jphi_1__jesUncTotalDown", "jet_p4_1__jesUncTotalDown");
+    auto df151 = quantities::phi(df150, "jphi_1__jesUncRelativeSampleYearUp", "jet_p4_1__jesUncRelativeSampleYearUp");
+    auto df152 = quantities::phi(df151, "jphi_1__jesUncAbsoluteDown", "jet_p4_1__jesUncAbsoluteDown");
+    auto df153 = quantities::phi(df152, "jphi_1__jerUncDown", "jet_p4_1__jerUncDown");
+    auto df154 = quantities::phi(df153, "jphi_1__jerUncUp", "jet_p4_1__jerUncUp");
+    auto df155 = quantities::phi(df154, "jphi_1__jesUncEC2YearDown", "jet_p4_1__jesUncEC2YearDown");
+    auto df156 = quantities::phi(df155, "jphi_1__jesUncBBEC1Down", "jet_p4_1__jesUncBBEC1Down");
+    auto df157 = quantities::phi(df156, "jphi_1__jesUncEC2Down", "jet_p4_1__jesUncEC2Down");
+    auto df158 = quantities::phi(df157, "jphi_1__jesUncAbsoluteYearDown", "jet_p4_1__jesUncAbsoluteYearDown");
+    auto df159 = quantities::phi(df158, "jphi_1__jesUncRelativeBalDown", "jet_p4_1__jesUncRelativeBalDown");
+    auto df160 = quantities::phi(df159, "jphi_1__jesUncTotalUp", "jet_p4_1__jesUncTotalUp");
+    auto df161 = quantities::phi(df160, "jphi_1__jesUncBBEC1YearUp", "jet_p4_1__jesUncBBEC1YearUp");
+    auto df162 = quantities::phi(df161, "jphi_1__jesUncHEMIssueUp", "jet_p4_1__jesUncHEMIssueUp");
+    auto df163 = quantities::phi(df162, "jphi_1__jesUncRelativeSampleYearDown", "jet_p4_1__jesUncRelativeSampleYearDown");
+    auto df164 = quantities::phi(df163, "jphi_1__jesUncHFUp", "jet_p4_1__jesUncHFUp");
+    auto df165 = quantities::phi(df164, "jphi_1__jesUncFlavorQCDDown", "jet_p4_1__jesUncFlavorQCDDown");
+    auto df166 = quantities::phi(df165, "jphi_1__jesUncHEMIssueDown", "jet_p4_1__jesUncHEMIssueDown");
+    auto df167 = quantities::phi(df166, "jphi_1__jesUncAbsoluteUp", "jet_p4_1__jesUncAbsoluteUp");
+    auto df168 = quantities::phi(df167, "jphi_1__jesUncEC2YearUp", "jet_p4_1__jesUncEC2YearUp");
+    auto df169 = quantities::phi(df168, "jphi_1__jesUncEC2Up", "jet_p4_1__jesUncEC2Up");
+    auto df170 = quantities::phi(df169, "jphi_1__jesUncBBEC1Up", "jet_p4_1__jesUncBBEC1Up");
+    auto df171 = quantities::phi(df170, "jphi_1__jesUncAbsoluteYearUp", "jet_p4_1__jesUncAbsoluteYearUp");
+    auto df172 = quantities::phi(df171, "jphi_1__jesUncHFYearUp", "jet_p4_1__jesUncHFYearUp");
+    auto df173 = quantities::phi(df172, "jphi_1__jesUncHFYearDown", "jet_p4_1__jesUncHFYearDown");
+    auto df174 = quantities::phi(df173, "jphi_1__jesUncBBEC1YearDown", "jet_p4_1__jesUncBBEC1YearDown");
+    auto df175 = quantities::jet::btagValue(df174, "jtag_value_1", "Jet_btagDeepFlavB", "good_jet_collection", 0);
+    auto df176 = quantities::jet::btagValue(df175, "jtag_value_1__jesUncFlavorQCDUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncFlavorQCDUp", 0);
+    auto df177 = quantities::jet::btagValue(df176, "jtag_value_1__jesUncHFDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFDown", 0);
+    auto df178 = quantities::jet::btagValue(df177, "jtag_value_1__jesUncRelativeBalUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeBalUp", 0);
+    auto df179 = quantities::jet::btagValue(df178, "jtag_value_1__jesUncTotalDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncTotalDown", 0);
+    auto df180 = quantities::jet::btagValue(df179, "jtag_value_1__jesUncRelativeSampleYearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeSampleYearUp", 0);
+    auto df181 = quantities::jet::btagValue(df180, "jtag_value_1__jesUncAbsoluteDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteDown", 0);
+    auto df182 = quantities::jet::btagValue(df181, "jtag_value_1__jerUncDown", "Jet_btagDeepFlavB", "good_jet_collection__jerUncDown", 0);
+    auto df183 = quantities::jet::btagValue(df182, "jtag_value_1__jerUncUp", "Jet_btagDeepFlavB", "good_jet_collection__jerUncUp", 0);
+    auto df184 = quantities::jet::btagValue(df183, "jtag_value_1__jesUncEC2YearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2YearDown", 0);
+    auto df185 = quantities::jet::btagValue(df184, "jtag_value_1__jesUncBBEC1Down", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1Down", 0);
+    auto df186 = quantities::jet::btagValue(df185, "jtag_value_1__jesUncEC2Down", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2Down", 0);
+    auto df187 = quantities::jet::btagValue(df186, "jtag_value_1__jesUncAbsoluteYearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteYearDown", 0);
+    auto df188 = quantities::jet::btagValue(df187, "jtag_value_1__jesUncRelativeBalDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeBalDown", 0);
+    auto df189 = quantities::jet::btagValue(df188, "jtag_value_1__jesUncTotalUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncTotalUp", 0);
+    auto df190 = quantities::jet::btagValue(df189, "jtag_value_1__jesUncBBEC1YearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1YearUp", 0);
+    auto df191 = quantities::jet::btagValue(df190, "jtag_value_1__jesUncHEMIssueUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHEMIssueUp", 0);
+    auto df192 = quantities::jet::btagValue(df191, "jtag_value_1__jesUncRelativeSampleYearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeSampleYearDown", 0);
+    auto df193 = quantities::jet::btagValue(df192, "jtag_value_1__jesUncHFUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFUp", 0);
+    auto df194 = quantities::jet::btagValue(df193, "jtag_value_1__jesUncFlavorQCDDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncFlavorQCDDown", 0);
+    auto df195 = quantities::jet::btagValue(df194, "jtag_value_1__jesUncHEMIssueDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHEMIssueDown", 0);
+    auto df196 = quantities::jet::btagValue(df195, "jtag_value_1__jesUncAbsoluteUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteUp", 0);
+    auto df197 = quantities::jet::btagValue(df196, "jtag_value_1__jesUncEC2YearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2YearUp", 0);
+    auto df198 = quantities::jet::btagValue(df197, "jtag_value_1__jesUncEC2Up", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2Up", 0);
+    auto df199 = quantities::jet::btagValue(df198, "jtag_value_1__jesUncBBEC1Up", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1Up", 0);
+    auto df200 = quantities::jet::btagValue(df199, "jtag_value_1__jesUncAbsoluteYearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteYearUp", 0);
+    auto df201 = quantities::jet::btagValue(df200, "jtag_value_1__jesUncHFYearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFYearUp", 0);
+    auto df202 = quantities::jet::btagValue(df201, "jtag_value_1__jesUncHFYearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFYearDown", 0);
+    auto df203 = quantities::jet::btagValue(df202, "jtag_value_1__jesUncBBEC1YearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1YearDown", 0);
+    auto df204 = quantities::pt(df203, "jpt_2", "jet_p4_2");
+    auto df205 = quantities::pt(df204, "jpt_2__jesUncFlavorQCDUp", "jet_p4_2__jesUncFlavorQCDUp");
+    auto df206 = quantities::pt(df205, "jpt_2__jesUncHFDown", "jet_p4_2__jesUncHFDown");
+    auto df207 = quantities::pt(df206, "jpt_2__jesUncRelativeBalUp", "jet_p4_2__jesUncRelativeBalUp");
+    auto df208 = quantities::pt(df207, "jpt_2__jesUncTotalDown", "jet_p4_2__jesUncTotalDown");
+    auto df209 = quantities::pt(df208, "jpt_2__jesUncRelativeSampleYearUp", "jet_p4_2__jesUncRelativeSampleYearUp");
+    auto df210 = quantities::pt(df209, "jpt_2__jesUncAbsoluteDown", "jet_p4_2__jesUncAbsoluteDown");
+    auto df211 = quantities::pt(df210, "jpt_2__jerUncDown", "jet_p4_2__jerUncDown");
+    auto df212 = quantities::pt(df211, "jpt_2__jerUncUp", "jet_p4_2__jerUncUp");
+    auto df213 = quantities::pt(df212, "jpt_2__jesUncEC2YearDown", "jet_p4_2__jesUncEC2YearDown");
+    auto df214 = quantities::pt(df213, "jpt_2__jesUncBBEC1Down", "jet_p4_2__jesUncBBEC1Down");
+    auto df215 = quantities::pt(df214, "jpt_2__jesUncEC2Down", "jet_p4_2__jesUncEC2Down");
+    auto df216 = quantities::pt(df215, "jpt_2__jesUncAbsoluteYearDown", "jet_p4_2__jesUncAbsoluteYearDown");
+    auto df217 = quantities::pt(df216, "jpt_2__jesUncRelativeBalDown", "jet_p4_2__jesUncRelativeBalDown");
+    auto df218 = quantities::pt(df217, "jpt_2__jesUncTotalUp", "jet_p4_2__jesUncTotalUp");
+    auto df219 = quantities::pt(df218, "jpt_2__jesUncBBEC1YearUp", "jet_p4_2__jesUncBBEC1YearUp");
+    auto df220 = quantities::pt(df219, "jpt_2__jesUncHEMIssueUp", "jet_p4_2__jesUncHEMIssueUp");
+    auto df221 = quantities::pt(df220, "jpt_2__jesUncRelativeSampleYearDown", "jet_p4_2__jesUncRelativeSampleYearDown");
+    auto df222 = quantities::pt(df221, "jpt_2__jesUncHFUp", "jet_p4_2__jesUncHFUp");
+    auto df223 = quantities::pt(df222, "jpt_2__jesUncFlavorQCDDown", "jet_p4_2__jesUncFlavorQCDDown");
+    auto df224 = quantities::pt(df223, "jpt_2__jesUncHEMIssueDown", "jet_p4_2__jesUncHEMIssueDown");
+    auto df225 = quantities::pt(df224, "jpt_2__jesUncAbsoluteUp", "jet_p4_2__jesUncAbsoluteUp");
+    auto df226 = quantities::pt(df225, "jpt_2__jesUncEC2YearUp", "jet_p4_2__jesUncEC2YearUp");
+    auto df227 = quantities::pt(df226, "jpt_2__jesUncEC2Up", "jet_p4_2__jesUncEC2Up");
+    auto df228 = quantities::pt(df227, "jpt_2__jesUncBBEC1Up", "jet_p4_2__jesUncBBEC1Up");
+    auto df229 = quantities::pt(df228, "jpt_2__jesUncAbsoluteYearUp", "jet_p4_2__jesUncAbsoluteYearUp");
+    auto df230 = quantities::pt(df229, "jpt_2__jesUncHFYearUp", "jet_p4_2__jesUncHFYearUp");
+    auto df231 = quantities::pt(df230, "jpt_2__jesUncHFYearDown", "jet_p4_2__jesUncHFYearDown");
+    auto df232 = quantities::pt(df231, "jpt_2__jesUncBBEC1YearDown", "jet_p4_2__jesUncBBEC1YearDown");
+    auto df233 = quantities::eta(df232, "jeta_2", "jet_p4_2");
+    auto df234 = quantities::eta(df233, "jeta_2__jesUncFlavorQCDUp", "jet_p4_2__jesUncFlavorQCDUp");
+    auto df235 = quantities::eta(df234, "jeta_2__jesUncHFDown", "jet_p4_2__jesUncHFDown");
+    auto df236 = quantities::eta(df235, "jeta_2__jesUncRelativeBalUp", "jet_p4_2__jesUncRelativeBalUp");
+    auto df237 = quantities::eta(df236, "jeta_2__jesUncTotalDown", "jet_p4_2__jesUncTotalDown");
+    auto df238 = quantities::eta(df237, "jeta_2__jesUncRelativeSampleYearUp", "jet_p4_2__jesUncRelativeSampleYearUp");
+    auto df239 = quantities::eta(df238, "jeta_2__jesUncAbsoluteDown", "jet_p4_2__jesUncAbsoluteDown");
+    auto df240 = quantities::eta(df239, "jeta_2__jerUncDown", "jet_p4_2__jerUncDown");
+    auto df241 = quantities::eta(df240, "jeta_2__jerUncUp", "jet_p4_2__jerUncUp");
+    auto df242 = quantities::eta(df241, "jeta_2__jesUncEC2YearDown", "jet_p4_2__jesUncEC2YearDown");
+    auto df243 = quantities::eta(df242, "jeta_2__jesUncBBEC1Down", "jet_p4_2__jesUncBBEC1Down");
+    auto df244 = quantities::eta(df243, "jeta_2__jesUncEC2Down", "jet_p4_2__jesUncEC2Down");
+    auto df245 = quantities::eta(df244, "jeta_2__jesUncAbsoluteYearDown", "jet_p4_2__jesUncAbsoluteYearDown");
+    auto df246 = quantities::eta(df245, "jeta_2__jesUncRelativeBalDown", "jet_p4_2__jesUncRelativeBalDown");
+    auto df247 = quantities::eta(df246, "jeta_2__jesUncTotalUp", "jet_p4_2__jesUncTotalUp");
+    auto df248 = quantities::eta(df247, "jeta_2__jesUncBBEC1YearUp", "jet_p4_2__jesUncBBEC1YearUp");
+    auto df249 = quantities::eta(df248, "jeta_2__jesUncHEMIssueUp", "jet_p4_2__jesUncHEMIssueUp");
+    auto df250 = quantities::eta(df249, "jeta_2__jesUncRelativeSampleYearDown", "jet_p4_2__jesUncRelativeSampleYearDown");
+    auto df251 = quantities::eta(df250, "jeta_2__jesUncHFUp", "jet_p4_2__jesUncHFUp");
+    auto df252 = quantities::eta(df251, "jeta_2__jesUncFlavorQCDDown", "jet_p4_2__jesUncFlavorQCDDown");
+    auto df253 = quantities::eta(df252, "jeta_2__jesUncHEMIssueDown", "jet_p4_2__jesUncHEMIssueDown");
+    auto df254 = quantities::eta(df253, "jeta_2__jesUncAbsoluteUp", "jet_p4_2__jesUncAbsoluteUp");
+    auto df255 = quantities::eta(df254, "jeta_2__jesUncEC2YearUp", "jet_p4_2__jesUncEC2YearUp");
+    auto df256 = quantities::eta(df255, "jeta_2__jesUncEC2Up", "jet_p4_2__jesUncEC2Up");
+    auto df257 = quantities::eta(df256, "jeta_2__jesUncBBEC1Up", "jet_p4_2__jesUncBBEC1Up");
+    auto df258 = quantities::eta(df257, "jeta_2__jesUncAbsoluteYearUp", "jet_p4_2__jesUncAbsoluteYearUp");
+    auto df259 = quantities::eta(df258, "jeta_2__jesUncHFYearUp", "jet_p4_2__jesUncHFYearUp");
+    auto df260 = quantities::eta(df259, "jeta_2__jesUncHFYearDown", "jet_p4_2__jesUncHFYearDown");
+    auto df261 = quantities::eta(df260, "jeta_2__jesUncBBEC1YearDown", "jet_p4_2__jesUncBBEC1YearDown");
+    auto df262 = quantities::phi(df261, "jphi_2", "jet_p4_2");
+    auto df263 = quantities::phi(df262, "jphi_2__jesUncFlavorQCDUp", "jet_p4_2__jesUncFlavorQCDUp");
+    auto df264 = quantities::phi(df263, "jphi_2__jesUncHFDown", "jet_p4_2__jesUncHFDown");
+    auto df265 = quantities::phi(df264, "jphi_2__jesUncRelativeBalUp", "jet_p4_2__jesUncRelativeBalUp");
+    auto df266 = quantities::phi(df265, "jphi_2__jesUncTotalDown", "jet_p4_2__jesUncTotalDown");
+    auto df267 = quantities::phi(df266, "jphi_2__jesUncRelativeSampleYearUp", "jet_p4_2__jesUncRelativeSampleYearUp");
+    auto df268 = quantities::phi(df267, "jphi_2__jesUncAbsoluteDown", "jet_p4_2__jesUncAbsoluteDown");
+    auto df269 = quantities::phi(df268, "jphi_2__jerUncDown", "jet_p4_2__jerUncDown");
+    auto df270 = quantities::phi(df269, "jphi_2__jerUncUp", "jet_p4_2__jerUncUp");
+    auto df271 = quantities::phi(df270, "jphi_2__jesUncEC2YearDown", "jet_p4_2__jesUncEC2YearDown");
+    auto df272 = quantities::phi(df271, "jphi_2__jesUncBBEC1Down", "jet_p4_2__jesUncBBEC1Down");
+    auto df273 = quantities::phi(df272, "jphi_2__jesUncEC2Down", "jet_p4_2__jesUncEC2Down");
+    auto df274 = quantities::phi(df273, "jphi_2__jesUncAbsoluteYearDown", "jet_p4_2__jesUncAbsoluteYearDown");
+    auto df275 = quantities::phi(df274, "jphi_2__jesUncRelativeBalDown", "jet_p4_2__jesUncRelativeBalDown");
+    auto df276 = quantities::phi(df275, "jphi_2__jesUncTotalUp", "jet_p4_2__jesUncTotalUp");
+    auto df277 = quantities::phi(df276, "jphi_2__jesUncBBEC1YearUp", "jet_p4_2__jesUncBBEC1YearUp");
+    auto df278 = quantities::phi(df277, "jphi_2__jesUncHEMIssueUp", "jet_p4_2__jesUncHEMIssueUp");
+    auto df279 = quantities::phi(df278, "jphi_2__jesUncRelativeSampleYearDown", "jet_p4_2__jesUncRelativeSampleYearDown");
+    auto df280 = quantities::phi(df279, "jphi_2__jesUncHFUp", "jet_p4_2__jesUncHFUp");
+    auto df281 = quantities::phi(df280, "jphi_2__jesUncFlavorQCDDown", "jet_p4_2__jesUncFlavorQCDDown");
+    auto df282 = quantities::phi(df281, "jphi_2__jesUncHEMIssueDown", "jet_p4_2__jesUncHEMIssueDown");
+    auto df283 = quantities::phi(df282, "jphi_2__jesUncAbsoluteUp", "jet_p4_2__jesUncAbsoluteUp");
+    auto df284 = quantities::phi(df283, "jphi_2__jesUncEC2YearUp", "jet_p4_2__jesUncEC2YearUp");
+    auto df285 = quantities::phi(df284, "jphi_2__jesUncEC2Up", "jet_p4_2__jesUncEC2Up");
+    auto df286 = quantities::phi(df285, "jphi_2__jesUncBBEC1Up", "jet_p4_2__jesUncBBEC1Up");
+    auto df287 = quantities::phi(df286, "jphi_2__jesUncAbsoluteYearUp", "jet_p4_2__jesUncAbsoluteYearUp");
+    auto df288 = quantities::phi(df287, "jphi_2__jesUncHFYearUp", "jet_p4_2__jesUncHFYearUp");
+    auto df289 = quantities::phi(df288, "jphi_2__jesUncHFYearDown", "jet_p4_2__jesUncHFYearDown");
+    auto df290 = quantities::phi(df289, "jphi_2__jesUncBBEC1YearDown", "jet_p4_2__jesUncBBEC1YearDown");
+    auto df291 = quantities::jet::btagValue(df290, "jtag_value_2", "Jet_btagDeepFlavB", "good_jet_collection", 1);
+    auto df292 = quantities::jet::btagValue(df291, "jtag_value_2__jesUncFlavorQCDUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncFlavorQCDUp", 1);
+    auto df293 = quantities::jet::btagValue(df292, "jtag_value_2__jesUncHFDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFDown", 1);
+    auto df294 = quantities::jet::btagValue(df293, "jtag_value_2__jesUncRelativeBalUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeBalUp", 1);
+    auto df295 = quantities::jet::btagValue(df294, "jtag_value_2__jesUncTotalDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncTotalDown", 1);
+    auto df296 = quantities::jet::btagValue(df295, "jtag_value_2__jesUncRelativeSampleYearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeSampleYearUp", 1);
+    auto df297 = quantities::jet::btagValue(df296, "jtag_value_2__jesUncAbsoluteDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteDown", 1);
+    auto df298 = quantities::jet::btagValue(df297, "jtag_value_2__jerUncDown", "Jet_btagDeepFlavB", "good_jet_collection__jerUncDown", 1);
+    auto df299 = quantities::jet::btagValue(df298, "jtag_value_2__jerUncUp", "Jet_btagDeepFlavB", "good_jet_collection__jerUncUp", 1);
+    auto df300 = quantities::jet::btagValue(df299, "jtag_value_2__jesUncEC2YearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2YearDown", 1);
+    auto df301 = quantities::jet::btagValue(df300, "jtag_value_2__jesUncBBEC1Down", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1Down", 1);
+    auto df302 = quantities::jet::btagValue(df301, "jtag_value_2__jesUncEC2Down", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2Down", 1);
+    auto df303 = quantities::jet::btagValue(df302, "jtag_value_2__jesUncAbsoluteYearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteYearDown", 1);
+    auto df304 = quantities::jet::btagValue(df303, "jtag_value_2__jesUncRelativeBalDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeBalDown", 1);
+    auto df305 = quantities::jet::btagValue(df304, "jtag_value_2__jesUncTotalUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncTotalUp", 1);
+    auto df306 = quantities::jet::btagValue(df305, "jtag_value_2__jesUncBBEC1YearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1YearUp", 1);
+    auto df307 = quantities::jet::btagValue(df306, "jtag_value_2__jesUncHEMIssueUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHEMIssueUp", 1);
+    auto df308 = quantities::jet::btagValue(df307, "jtag_value_2__jesUncRelativeSampleYearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncRelativeSampleYearDown", 1);
+    auto df309 = quantities::jet::btagValue(df308, "jtag_value_2__jesUncHFUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFUp", 1);
+    auto df310 = quantities::jet::btagValue(df309, "jtag_value_2__jesUncFlavorQCDDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncFlavorQCDDown", 1);
+    auto df311 = quantities::jet::btagValue(df310, "jtag_value_2__jesUncHEMIssueDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHEMIssueDown", 1);
+    auto df312 = quantities::jet::btagValue(df311, "jtag_value_2__jesUncAbsoluteUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteUp", 1);
+    auto df313 = quantities::jet::btagValue(df312, "jtag_value_2__jesUncEC2YearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2YearUp", 1);
+    auto df314 = quantities::jet::btagValue(df313, "jtag_value_2__jesUncEC2Up", "Jet_btagDeepFlavB", "good_jet_collection__jesUncEC2Up", 1);
+    auto df315 = quantities::jet::btagValue(df314, "jtag_value_2__jesUncBBEC1Up", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1Up", 1);
+    auto df316 = quantities::jet::btagValue(df315, "jtag_value_2__jesUncAbsoluteYearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncAbsoluteYearUp", 1);
+    auto df317 = quantities::jet::btagValue(df316, "jtag_value_2__jesUncHFYearUp", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFYearUp", 1);
+    auto df318 = quantities::jet::btagValue(df317, "jtag_value_2__jesUncHFYearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncHFYearDown", 1);
+    auto df319 = quantities::jet::btagValue(df318, "jtag_value_2__jesUncBBEC1YearDown", "Jet_btagDeepFlavB", "good_jet_collection__jesUncBBEC1YearDown", 1);
+    auto df320 = quantities::m_vis(df319, "mjj", {"jet_p4_1","jet_p4_2"});
+    auto df321 = quantities::m_vis(df320, "mjj__jesUncFlavorQCDUp", {"jet_p4_1__jesUncFlavorQCDUp","jet_p4_2__jesUncFlavorQCDUp"});
+    auto df322 = quantities::m_vis(df321, "mjj__jesUncHFDown", {"jet_p4_1__jesUncHFDown","jet_p4_2__jesUncHFDown"});
+    auto df323 = quantities::m_vis(df322, "mjj__jesUncRelativeBalUp", {"jet_p4_1__jesUncRelativeBalUp","jet_p4_2__jesUncRelativeBalUp"});
+    auto df324 = quantities::m_vis(df323, "mjj__jesUncTotalDown", {"jet_p4_1__jesUncTotalDown","jet_p4_2__jesUncTotalDown"});
+    auto df325 = quantities::m_vis(df324, "mjj__jesUncRelativeSampleYearUp", {"jet_p4_1__jesUncRelativeSampleYearUp","jet_p4_2__jesUncRelativeSampleYearUp"});
+    auto df326 = quantities::m_vis(df325, "mjj__jesUncAbsoluteDown", {"jet_p4_1__jesUncAbsoluteDown","jet_p4_2__jesUncAbsoluteDown"});
+    auto df327 = quantities::m_vis(df326, "mjj__jerUncDown", {"jet_p4_1__jerUncDown","jet_p4_2__jerUncDown"});
+    auto df328 = quantities::m_vis(df327, "mjj__jerUncUp", {"jet_p4_1__jerUncUp","jet_p4_2__jerUncUp"});
+    auto df329 = quantities::m_vis(df328, "mjj__jesUncEC2YearDown", {"jet_p4_1__jesUncEC2YearDown","jet_p4_2__jesUncEC2YearDown"});
+    auto df330 = quantities::m_vis(df329, "mjj__jesUncBBEC1Down", {"jet_p4_1__jesUncBBEC1Down","jet_p4_2__jesUncBBEC1Down"});
+    auto df331 = quantities::m_vis(df330, "mjj__jesUncEC2Down", {"jet_p4_1__jesUncEC2Down","jet_p4_2__jesUncEC2Down"});
+    auto df332 = quantities::m_vis(df331, "mjj__jesUncAbsoluteYearDown", {"jet_p4_1__jesUncAbsoluteYearDown","jet_p4_2__jesUncAbsoluteYearDown"});
+    auto df333 = quantities::m_vis(df332, "mjj__jesUncRelativeBalDown", {"jet_p4_1__jesUncRelativeBalDown","jet_p4_2__jesUncRelativeBalDown"});
+    auto df334 = quantities::m_vis(df333, "mjj__jesUncTotalUp", {"jet_p4_1__jesUncTotalUp","jet_p4_2__jesUncTotalUp"});
+    auto df335 = quantities::m_vis(df334, "mjj__jesUncBBEC1YearUp", {"jet_p4_1__jesUncBBEC1YearUp","jet_p4_2__jesUncBBEC1YearUp"});
+    auto df336 = quantities::m_vis(df335, "mjj__jesUncHEMIssueUp", {"jet_p4_1__jesUncHEMIssueUp","jet_p4_2__jesUncHEMIssueUp"});
+    auto df337 = quantities::m_vis(df336, "mjj__jesUncRelativeSampleYearDown", {"jet_p4_1__jesUncRelativeSampleYearDown","jet_p4_2__jesUncRelativeSampleYearDown"});
+    auto df338 = quantities::m_vis(df337, "mjj__jesUncHFUp", {"jet_p4_1__jesUncHFUp","jet_p4_2__jesUncHFUp"});
+    auto df339 = quantities::m_vis(df338, "mjj__jesUncFlavorQCDDown", {"jet_p4_1__jesUncFlavorQCDDown","jet_p4_2__jesUncFlavorQCDDown"});
+    auto df340 = quantities::m_vis(df339, "mjj__jesUncHEMIssueDown", {"jet_p4_1__jesUncHEMIssueDown","jet_p4_2__jesUncHEMIssueDown"});
+    auto df341 = quantities::m_vis(df340, "mjj__jesUncAbsoluteUp", {"jet_p4_1__jesUncAbsoluteUp","jet_p4_2__jesUncAbsoluteUp"});
+    auto df342 = quantities::m_vis(df341, "mjj__jesUncEC2YearUp", {"jet_p4_1__jesUncEC2YearUp","jet_p4_2__jesUncEC2YearUp"});
+    auto df343 = quantities::m_vis(df342, "mjj__jesUncEC2Up", {"jet_p4_1__jesUncEC2Up","jet_p4_2__jesUncEC2Up"});
+    auto df344 = quantities::m_vis(df343, "mjj__jesUncBBEC1Up", {"jet_p4_1__jesUncBBEC1Up","jet_p4_2__jesUncBBEC1Up"});
+    auto df345 = quantities::m_vis(df344, "mjj__jesUncAbsoluteYearUp", {"jet_p4_1__jesUncAbsoluteYearUp","jet_p4_2__jesUncAbsoluteYearUp"});
+    auto df346 = quantities::m_vis(df345, "mjj__jesUncHFYearUp", {"jet_p4_1__jesUncHFYearUp","jet_p4_2__jesUncHFYearUp"});
+    auto df347 = quantities::m_vis(df346, "mjj__jesUncHFYearDown", {"jet_p4_1__jesUncHFYearDown","jet_p4_2__jesUncHFYearDown"});
+    auto df348 = quantities::m_vis(df347, "mjj__jesUncBBEC1YearDown", {"jet_p4_1__jesUncBBEC1YearDown","jet_p4_2__jesUncBBEC1YearDown"});
+    return df348;
+
+}

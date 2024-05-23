@@ -1,0 +1,1 @@
+ROOT::RDF::RNode EMGenerateSingleMuonTriggerFlags_em(ROOT::RDF::RNode df, OnnxSessionManager &onnxSessionManager, CorrectionManager &correctionManager);
